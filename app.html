@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RELITALK — Выберите свой тариф</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FAF9F6;
+  --ink:#0F0E19;
+  --purple:#775EF3;
+  --purple-dark:#5F46E0;
+  --purple-soft:#EDEAFB;
+  --green:#5BB482;
+  --muted:#8A8794;
+  --line:#E9E6DE;
+  --card:#FFFFFF;
+  --radius:22px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:'Manrope',system-ui,-apple-system,sans-serif;
+  background:var(--bg); color:var(--ink); line-height:1.4;
+  padding:26px 24px 40px; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1160px;margin:0 auto}
+
+/* Переключатель языка */
+.langbar{display:flex;justify-content:flex-end;margin-bottom:18px}
+.lang{display:flex;gap:3px;background:#F0EDE6;padding:4px;border-radius:14px}
+.lang button{
+  font-family:inherit;font-size:14px;font-weight:700;letter-spacing:.04em;
+  padding:8px 16px;border:none;background:transparent;border-radius:11px;
+  color:var(--muted);cursor:pointer;transition:all .15s
+}
+.lang button:hover{color:var(--ink)}
+.lang button.on{background:#fff;color:var(--purple);box-shadow:0 1px 3px rgba(15,14,25,.1)}
+.lang button:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
+
+h1{text-align:center;font-weight:800;font-size:clamp(30px,5.4vw,66px);line-height:1.05;letter-spacing:-.025em;margin-bottom:18px}
+h1 .accent{color:var(--purple)}
+.sub{text-align:center;color:var(--muted);font-size:clamp(15px,2vw,19px);font-weight:500;margin-bottom:30px}
+
+/* промокод */
+.promo{display:flex;gap:14px;justify-content:center;align-items:stretch;flex-wrap:wrap;margin-bottom:14px}
+.promo input{
+  font-family:inherit;font-size:17px;font-weight:600;letter-spacing:.02em;
+  padding:15px 22px;width:min(320px,80vw);
+  border:1.5px solid var(--line);border-radius:16px;background:#fff;color:var(--ink);
+  outline:none;transition:border-color .15s, box-shadow .15s;
+}
+.promo input::placeholder{color:#C7C3BA;letter-spacing:.25em}
+.promo-field{position:relative;display:inline-flex}
+.promo-field input{padding-right:52px;letter-spacing:.3em}
+.eye{
+  position:absolute;right:6px;top:50%;transform:translateY(-50%);
+  width:40px;height:40px;display:flex;align-items:center;justify-content:center;
+  background:none;border:none;border-radius:12px;cursor:pointer;color:#B4B0A6;
+  transition:color .15s, background .15s;padding:0;
+}
+.eye:hover{color:var(--purple);background:var(--purple-soft)}
+.eye:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
+.eye.on{color:var(--purple)}
+.promo input:focus{border-color:var(--purple);box-shadow:0 0 0 4px rgba(119,94,243,.14)}
+.promo button.apply{
+  font-family:inherit;font-size:17px;font-weight:700;cursor:pointer;
+  padding:15px 34px;border:none;border-radius:16px;
+  background:var(--purple);color:#fff;transition:background .15s, transform .05s;
+}
+.promo button.apply:hover{background:var(--purple-dark)}
+.promo button.apply:active{transform:translateY(1px)}
+.promo-msg{text-align:center;min-height:24px;font-size:15px;font-weight:600;margin-bottom:26px}
+.promo-msg.ok{color:var(--green)}
+.promo-msg.err{color:#E1556B}
+.promo-msg.hint{color:var(--muted);font-weight:500}
+.promo-cond{
+  display:none;justify-content:center;align-items:center;gap:8px;
+  margin:12px auto 22px;padding:9px 18px;width:fit-content;max-width:100%;
+  background:var(--purple-soft);border:1.5px solid #D5CCFA;border-radius:14px;
+  color:var(--purple-dark);font-weight:700;font-size:14px;text-align:center;line-height:1.35;
+}
+.promo-cond.on{display:flex}
+.promo-cond svg{flex:none}
+
+/* карточки */
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;align-items:stretch;margin-top:20px}
+.card{
+  position:relative;background:var(--card);border:1.5px solid var(--line);
+  border-radius:var(--radius);padding:34px 22px 26px;text-align:center;
+  display:flex;flex-direction:column;transition:transform .15s, box-shadow .15s;
+}
+.card:hover{transform:translateY(-4px);box-shadow:0 14px 34px rgba(15,14,25,.07)}
+.card.best{border-color:var(--purple);border-width:2px;background:#FBFAFF;box-shadow:0 14px 40px rgba(119,94,243,.12)}
+.badge-best{
+  position:absolute;top:-15px;left:50%;transform:translateX(-50%);
+  background:var(--purple);color:#fff;font-weight:800;font-size:12px;
+  letter-spacing:.12em;padding:8px 18px;border-radius:999px;white-space:nowrap;
+}
+.tag{display:inline-block;background:var(--purple-soft);color:var(--purple);font-weight:800;font-size:12px;letter-spacing:.09em;padding:8px 16px;border-radius:999px;margin-bottom:22px}
+.term{font-weight:800;font-size:28px;letter-spacing:-.01em;margin-bottom:18px}
+.price-old{color:var(--muted);font-weight:700;font-size:18px;text-decoration:line-through;text-decoration-color:#D9556B;min-height:22px;margin-bottom:2px}
+.price{font-weight:700;font-size:20px;letter-spacing:-.01em;margin-bottom:6px;min-height:28px;color:#4A4757}
+.permonth{color:var(--green);font-weight:800;font-size:38px;letter-spacing:-.02em;line-height:1.1}
+.permonth-label{color:var(--muted);font-weight:600;font-size:14px;margin-top:3px}
+.once{color:var(--muted);font-weight:600;font-size:14px;margin-top:2px}
+.disc-badge{
+  display:inline-block;background:linear-gradient(135deg,#4FBF86,#2E9E68);color:#fff;
+  font-weight:800;font-size:13px;padding:5px 14px;border-radius:999px;margin-bottom:10px;
+  box-shadow:0 3px 10px rgba(46,158,104,.28);
+}
+/* Карточка со скидкой: подсвечиваем выгоду */
+.card.saving{border-color:#9BD9B7;background:#FAFFFC}
+.card.saving.best{border-color:var(--purple);background:#FBFAFF}
+.card.saving .price{color:#1F8A57}
+.card.saving .brow.acc b{color:#1F8A57}
+.card.saving .brow.tot b{color:#1F8A57}
+.save-note{
+  margin-top:10px;background:#E9F7EF;color:#1F8A57;border-radius:12px;
+  padding:8px 10px;font-weight:800;font-size:13px;letter-spacing:-.01em;
+}
+.save-note span{display:block;font-weight:700;font-size:11.5px;letter-spacing:.06em;
+  text-transform:uppercase;color:#4FA97C;margin-bottom:1px}
+/* Выравнивает блок «Из чего складывается цена» на одном уровне во всех карточках */
+.mid{display:flex;flex-direction:column;justify-content:flex-start}
+.disc-slot{min-height:0}
+.grid.has-disc .disc-slot{min-height:38px}
+.pmbox{display:flex;flex-direction:column;justify-content:flex-start;min-height:72px}
+
+/* структура цены */
+.bd{margin-top:18px;padding-top:16px;border-top:1px solid var(--line);text-align:left}
+.bd-h{font-weight:800;font-size:11.5px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:10px;text-align:center}
+.brow{display:flex;justify-content:space-between;gap:10px;align-items:baseline;font-size:13.5px;padding:4px 0}
+.brow span{color:var(--muted);font-weight:600}
+.brow b{font-weight:800;white-space:nowrap}
+.brow s{color:#C3BFB6;font-weight:600;text-decoration-color:#D9556B;margin-right:5px}
+.brow.tot{border-top:1px solid var(--line);margin-top:7px;padding-top:8px}
+.brow.tot span{color:var(--ink);font-weight:800}
+.bd-note{font-size:12.5px;color:var(--muted);font-weight:600;margin-top:9px;line-height:1.4}
+.schedule{color:#C3BFB6;font-weight:600;font-size:14px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);text-align:center}
+
+/* блок условий */
+.refund{
+  position:relative;z-index:2;background:var(--bg);
+  max-width:900px;margin:34px auto 0;text-align:center;
+  font-size:15px;font-weight:600;color:var(--muted);line-height:1.6;
+}
+.refund a{color:var(--purple);font-weight:700;text-decoration:none;
+  border-bottom:1.5px solid rgba(119,94,243,.35);white-space:nowrap}
+.refund a:hover{border-bottom-color:var(--purple)}
+
+.foot{text-align:center;color:var(--muted);font-weight:600;font-size:16px;margin-top:30px}
+
+@media(max-width:900px){
+  .grid{grid-template-columns:repeat(2,1fr);gap:16px}
+  body{padding:20px 16px 32px}
+  .refund{font-size:14px;margin-top:28px}
+}
+@media(max-width:560px){
+  .grid{grid-template-columns:1fr;max-width:380px;margin-inline:auto}
+  .card.best{order:-1}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ===== Компактный режим: всё умещается в один экран без прокрутки.
+   Включается только на широких экранах достаточной высоты;
+   на мобильных и низких окнах остаётся обычная прокрутка. ===== */
+@media (min-width:901px) and (min-height:600px){
+  body{
+    min-height:100dvh;
+    padding:16px 24px 22px;display:flex;flex-direction:column;
+  }
+  .wrap{flex:1;display:flex;flex-direction:column;justify-content:flex-start;width:100%}
+
+  .langbar{margin-bottom:6px}
+  .lang button{padding:6px 13px;font-size:13px}
+
+  h1{font-size:clamp(28px,min(5.4vh,4.6vw),62px);line-height:1.04;margin-bottom:10px;white-space:normal}
+  .sub{font-size:clamp(13px,1.7vh,16px);margin-bottom:10px}
+
+  .promo{gap:10px;margin-bottom:8px}
+  .promo input{font-size:15px;padding:11px 18px;border-radius:13px;width:min(280px,60vw)}
+  .promo-field input{padding-right:46px}
+  .eye{width:34px;height:34px;right:5px}
+  .promo button.apply{font-size:15px;padding:11px 26px;border-radius:13px}
+  .promo-msg{font-size:13px;min-height:19px;margin-bottom:2px}
+  .promo-cond{font-size:12px;padding:6px 13px;margin:9px auto 2px;border-radius:11px}
+
+  .grid{flex:0 0 auto;gap:15px;margin-top:16px;padding-top:2px}
+  .card{padding:23px 18px 14px;border-radius:20px}
+  .badge-best{top:-13px;font-size:11.5px;padding:6px 15px}
+  .tag{font-size:11.5px;padding:7px 14px;margin-bottom:13px}
+  .term{font-size:clamp(20px,3.1vh,31px);margin-bottom:11px}
+
+  .grid.has-disc .disc-slot{min-height:clamp(26px,3.6vh,34px)}
+  .pmbox{min-height:clamp(60px,8.8vh,86px)}
+  .disc-badge{font-size:12.5px;padding:4px 12px;margin-bottom:6px}
+  .price-old{font-size:15px;min-height:19px}
+  .price{font-size:clamp(16px,2.3vh,22px);margin-bottom:5px;min-height:27px}
+  .permonth{font-size:clamp(27px,4.5vh,44px)}
+  .permonth-label,.once{font-size:13.5px}
+
+  .bd{margin-top:12px;padding-top:11px}
+  .bd-h{font-size:11px;margin-bottom:8px}
+  .brow{font-size:13.5px;padding:3.5px 0}
+  .brow.tot{margin-top:5px;padding-top:7px}
+  .bd-note{font-size:12px;margin-top:6px}
+  .save-note{margin-top:8px;padding:7px 10px;font-size:13.5px;border-radius:11px}
+  .save-note span{font-size:11px;margin-bottom:1px}
+  .schedule{font-size:12.5px;margin-top:9px;padding-top:8px}
+
+  .refund{margin:auto auto 0;padding-top:14px;font-size:13.5px;line-height:1.5;max-width:900px}
+  .foot{margin-top:8px;font-size:14px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="langbar">
+    <div class="lang" role="group" aria-label="Язык / Тіл">
+      <button type="button" data-lang="ru" class="on">РУС</button>
+      <button type="button" data-lang="kk">ҚАЗ</button>
+    </div>
+  </div>
+
+  <h1 id="h1"></h1>
+  <p class="sub" id="sub"></p>
+
+  <div class="promo">
+    <div class="promo-field">
+      <input id="promo" type="password" placeholder="••••••••" autocomplete="off" spellcheck="false"
+             autocapitalize="off" autocorrect="off" maxlength="24">
+      <button type="button" id="toggle" class="eye">
+        <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>
+        </svg>
+      </button>
+    </div>
+    <button id="apply" class="apply"></button>
+  </div>
+
+  <div class="promo-msg hint" id="msg"></div>
+  <p class="promo-cond" id="cond"></p>
+
+  <div class="grid" id="grid"></div>
+
+  <p class="refund" id="refund"></p>
+
+  <p class="foot" id="foot"></p>
+</div>
+
+<script>
+/* ====== НАСТРОЙКИ ====== */
+const OFFER_URL = 'https://relitalk.com/';           // ссылка на текст Оферты
+const CODES = { 'RELI10':10, 'RELI20':20, 'RELI30':30, 'RELI40':40 };
+
+/* Тарифы. components — Единовременно предоставляемые компоненты (п. 2.16-1 Оферты).
+   По тарифу «ПОМЕСЯЧНО» методическая база не предоставляется (п. 2.16-1.4). */
+const MEETING = 15000, BASE_KIT = 182000;
+const PLANS = [
+  { id:'m1',  months:1,  price:74000,  kit:false, discountable:false, best:false },
+  { id:'m6',  months:6,  price:396000, kit:true,  discountable:true,  best:false },
+  { id:'m12', months:12, price:480000, kit:true,  discountable:true,  best:true  },
+  { id:'m24', months:24, price:696000, kit:true,  discountable:true,  best:false },
+];
+
+/* ====== ПЕРЕВОДЫ ====== */
+const I18N = {
+ru:{
+  title:'RELITALK — Выберите свой тариф',
+  h1:'Выберите свой тариф<br><span class="accent">и начните говорить</span>',
+  sub:'Введите промокод, чтобы увидеть специальные условия',
+  apply:'Применить',
+  hint:'Скидка по промокоду действует на пакеты 6, 12 и 24 месяца. Тариф «1 месяц» — всегда без скидки.',
+  ok:d=>`Промокод применён: скидка −${d}% на пакеты. Тариф «1 месяц» идёт без скидки.`,
+  err:'Промокод не найден. Проверьте написание и попробуйте снова.',
+  show:'Показать промокод', hide:'Скрыть промокод',
+  best:'ЛУЧШИЙ ВЫБОР',
+  tags:{m1:'ПОМЕСЯЧНО',m6:'РАЗГОВОРНЫЙ УРОВЕНЬ',m12:'СВОБОДНЫЙ АНГЛИЙСКИЙ',m24:'В СОВЕРШЕНСТВЕ'},
+  terms:{m1:'1 месяц',m6:'6 месяцев',m12:'12 месяцев',m24:'24 месяца'},
+  perMonth:'в месяц при рассрочке',
+  once:'разовый платёж, без рассрочки',
+  bdH:'Из чего складывается цена',
+  kit:'Методическая база',
+  meeting:'Установочная встреча',
+  access:m=>`Доступ, ${m} мес.`,
+  total:'Итого к оплате',
+  noKit:'без методической базы',
+  saveLbl:'Ваша выгода',
+  cond:'Промокод действует при оплате прямо на встрече',
+  refund:`Отказаться можно в любой момент: в первые 3 календарных дня после активации доступа возвращается вся сумма за вычетом проведённой установочной встречи, далее — по расчёту раздела 12 <a href="${OFFER_URL}" target="_blank" rel="noopener">Оферты</a>.`,
+  foot:'Рассрочка без %'
+},
+kk:{
+  title:'RELITALK — Тарифіңізді таңдаңыз',
+  h1:'Тарифіңізді таңдап<br><span class="accent">сөйлей бастаңыз</span>',
+  sub:'Арнайы шарттарды көру үшін промокод енгізіңіз',
+  apply:'Қолдану',
+  hint:'Промокод бойынша жеңілдік 6, 12 және 24 айлық пакеттерге қолданылады. «1 ай» тарифі әрқашан жеңілдіксіз.',
+  ok:d=>`Промокод қолданылды: пакеттерге −${d}% жеңілдік. «1 ай» тарифі жеңілдіксіз.`,
+  err:'Промокод табылмады. Жазылуын тексеріп, қайта көріңіз.',
+  show:'Промокодты көрсету', hide:'Промокодты жасыру',
+  best:'ҮЗДІК ТАҢДАУ',
+  tags:{m1:'АЙ САЙЫН',m6:'СӨЙЛЕУ ДЕҢГЕЙІ',m12:'ЕРКІН АҒЫЛШЫН',m24:'ЖЕТІК ДЕҢГЕЙ'},
+  terms:{m1:'1 ай',m6:'6 ай',m12:'12 ай',m24:'24 ай'},
+  perMonth:'бөліп төлеу кезінде айына',
+  once:'бір реттік төлем, бөліп төлеусіз',
+  bdH:'Баға неден құралады',
+  kit:'Әдістемелік база',
+  meeting:'Кіріспе кездесу',
+  access:m=>`Қолжетімділік, ${m} ай`,
+  total:'Төлеуге барлығы',
+  noKit:'әдістемелік базасыз',
+  saveLbl:'Сіздің үнемдеуіңіз',
+  cond:'Промокод кездесу барысында бірден төлеген жағдайда жарамды',
+  refund:`Кез келген уақытта бас тартуға болады: қолжетімділік іске қосылғаннан кейінгі алғашқы 3 күнтізбелік күнде өткізілген кіріспе кездесудің құны шегеріліп, сома толық қайтарылады, одан кейін <a href="${OFFER_URL}" target="_blank" rel="noopener">Офертаның</a> 12-бөлімі бойынша есептеледі.`,
+  foot:'Пайызсыз бөліп төлеу'
+}};
+
+let LANG = 'ru', discount = 0;
+const T = () => I18N[LANG];
+const $ = id => document.getElementById(id);
+const fmt = n => Math.round(n).toLocaleString('ru-RU').replace(/,/g,'\u00A0');
+
+function render(){
+  const t = T();
+  const grid = $('grid');
+  grid.className = 'grid' + (discount > 0 ? ' has-disc' : '');
+  grid.innerHTML = '';
+
+  for(const p of PLANS){
+    const applies   = p.discountable && discount > 0;
+    const total     = applies ? p.price*(100-discount)/100 : p.price;
+    const kit       = p.kit ? BASE_KIT : 0;
+    const comps     = kit + MEETING;
+    const accessOld = p.price - comps;          // стоимость доступа без скидки
+    const access    = Math.max(0, total - comps); // скидка ложится на доступ
+    const perMonth  = total / p.months;
+
+    const card = document.createElement('div');
+    card.className = 'card' + (p.best ? ' best' : '') + (applies ? ' saving' : '');
+
+    let h = '';
+    if(p.best) h += `<div class="badge-best">${t.best}</div>`;
+    h += `<div class="tag">${t.tags[p.id]}</div>`;
+    h += `<div class="term">${t.terms[p.id]}</div>`;
+    h += `<div class="mid">`;
+    h += `<div class="disc-slot">${applies ? `<div class="disc-badge">−${discount}%</div>` : ''}</div>`;
+    h += `<div class="price-old">${applies ? fmt(p.price)+'\u00A0₸' : ''}</div>`;
+    h += `<div class="price">${p.months === 1 ? '' : fmt(total)+'\u00A0₸'}</div>`;
+    h += `<div class="pmbox">`;
+    h += `<div class="permonth">${fmt(perMonth)}\u00A0₸</div>`;
+    h += `<div class="permonth-label">${p.months === 1 ? t.once : t.perMonth}</div>`;
+    h += `</div></div>`;
+
+    /* Структура цены — требование п. 12.6.1 Оферты */
+    h += `<div class="bd"><div class="bd-h">${t.bdH}</div>`;
+    if(kit) h += `<div class="brow"><span>${t.kit}</span><b>${fmt(kit)}\u00A0₸</b></div>`;
+    h += `<div class="brow"><span>${t.meeting}</span><b>${fmt(MEETING)}\u00A0₸</b></div>`;
+    h += `<div class="brow acc"><span>${t.access(p.months)}</span><b>` +
+         (applies ? `<s>${fmt(accessOld)}</s>` : '') + `${fmt(access)}\u00A0₸</b></div>`;
+    h += `<div class="brow tot"><span>${t.total}</span><b>${fmt(total)}\u00A0₸</b></div>`;
+    if(applies) h += `<div class="save-note"><span>${t.saveLbl}</span>${fmt(p.price-total)}\u00A0₸</div>`;
+    h += `</div>`;
+
+    h += `<div class="schedule">${p.months > 1 ? `0 — 0 — ${p.months}` : t.noKit}</div>`;
+
+    card.innerHTML = h;
+    grid.appendChild(card);
+  }
+}
+
+function paintCond(){
+  const c = $('cond');
+  c.innerHTML = `<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor"
+     stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+     <circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16.5h.01"/></svg><span>${T().cond}</span>`;
+  c.classList.toggle('on', discount > 0);
+}
+
+function paint(){
+  const t = T();
+  document.documentElement.lang = LANG;
+  document.title = t.title;
+  $('h1').innerHTML = t.h1;
+  $('sub').textContent = t.sub;
+  $('apply').textContent = t.apply;
+  $('refund').innerHTML = t.refund;
+  $('foot').textContent = t.foot;
+  $('promo').setAttribute('aria-label', 'Промокод');
+
+  const msg = $('msg');
+  if(discount > 0){ msg.className = 'promo-msg ok'; msg.textContent = t.ok(discount); }
+  else if(msg.classList.contains('err')){ msg.textContent = t.err; }
+  else { msg.className = 'promo-msg hint'; msg.textContent = t.hint; }
+
+  paintCond();
+  render();
+}
+
+/* нормализация промокода: пробелы, регистр, похожие кириллические буквы */
+const LOOKALIKE = {'А':'A','В':'B','Е':'E','К':'K','М':'M','Н':'H','О':'O','Р':'P','С':'C','Т':'T','У':'Y','Х':'X'};
+const normalize = v => (v||'').replace(/\s+/g,'').toUpperCase().replace(/[АВЕКМНОРСТУХ]/g, c => LOOKALIKE[c]);
+
+function apply(){
+  const raw = normalize($('promo').value);
+  const msg = $('msg'), t = T();
+  if(raw === ''){
+    discount = 0; msg.className = 'promo-msg hint'; msg.textContent = t.hint;
+  } else if(CODES[raw] !== undefined){
+    discount = CODES[raw]; msg.className = 'promo-msg ok'; msg.textContent = t.ok(discount);
+  } else {
+    discount = 0; msg.className = 'promo-msg err'; msg.textContent = t.err;
+  }
+  paintCond();
+  render();
+}
+
+const eye = $('toggle');
+eye.addEventListener('click', () => {
+  const inp = $('promo'), shown = inp.type === 'text';
+  inp.type = shown ? 'password' : 'text';
+  eye.classList.toggle('on', !shown);
+  const lbl = shown ? T().show : T().hide;
+  eye.setAttribute('aria-label', lbl); eye.setAttribute('title', lbl);
+  inp.focus();
+});
+$('apply').addEventListener('click', apply);
+$('promo').addEventListener('keydown', e => { if(e.key === 'Enter') apply(); });
+
+document.querySelectorAll('.lang button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.lang button').forEach(x => x.classList.remove('on'));
+  b.classList.add('on'); LANG = b.dataset.lang; paint();
+}));
+
+paint();
+</script>
+</body>
+</html>
